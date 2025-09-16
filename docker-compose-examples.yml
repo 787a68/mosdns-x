@@ -1,0 +1,68 @@
+# 修复挂载问题的几种使用方式示例
+
+# 方案1：不挂载配置目录（使用默认配置）
+version: '3.8'
+services:
+  mosdns-default:
+    image: ghcr.io/787a68/mosdns-x:latest
+    container_name: mosdns-default
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    environment:
+      - TZ=Asia/Shanghai
+      - crontab=0 4 * * *
+    restart: unless-stopped
+
+---
+# 方案2：挂载空目录（让容器自动初始化配置）
+version: '3.8'
+services:
+  mosdns-auto-init:
+    image: ghcr.io/787a68/mosdns-x:latest
+    container_name: mosdns-auto-init
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    volumes:
+      # 挂载一个空目录，容器会自动复制默认配置
+      - ./mosdns-config:/etc/mosdns
+    environment:
+      - TZ=Asia/Shanghai
+      - crontab=0 4 * * *
+    restart: unless-stopped
+
+---
+# 方案3：预先准备好配置文件的挂载
+version: '3.8'
+services:
+  mosdns-custom:
+    image: ghcr.io/787a68/mosdns-x:latest
+    container_name: mosdns-custom
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    volumes:
+      # 挂载已经准备好配置文件的目录
+      - ./custom-mosdns-config:/etc/mosdns
+    environment:
+      - TZ=Asia/Shanghai
+      - crontab=0 4 * * *
+    restart: unless-stopped
+
+---
+# 方案4：只挂载配置文件（不推荐，因为规则文件也需要）
+version: '3.8'
+services:
+  mosdns-file-only:
+    image: ghcr.io/787a68/mosdns-x:latest
+    container_name: mosdns-file-only
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    volumes:
+      # 这种方式可能导致规则文件缺失
+      - ./config.yaml:/etc/mosdns/config.yaml:ro
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
