@@ -13,11 +13,11 @@ if [ -z "$(ls -A $CONFIG_DIR 2>/dev/null)" ]; then
     cp -rT "$DEFAULT_CONFIG_DIR/" "$CONFIG_DIR/"
     echo "Default configuration copied."
 fi
-# 将挂载的 `/data/config.yml` 文件复制并覆盖到 /etc/mosdns
+# 将挂载的 `/data/config.yaml` 文件复制并覆盖到 /etc/mosdns
 if [ -f "/data/config.yaml" ]; then
     echo "Found custom config at /data/config.yml. Copying to $CONFIG_DIR..."
     # 复制并覆盖默认配置
-    cp -fv /data/config.yml "$CONFIG_DIR/"
+    cp -fv /data/config.yaml "$CONFIG_DIR/"
 fi
 
 CRONTAB_FILE="/etc/crontabs/root"
