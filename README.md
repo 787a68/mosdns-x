@@ -71,9 +71,9 @@ docker logs -f mosdns-x
 ## 常见问题（FAQ）
 
 - 配置从哪里来？
-  - 镜像内已预置来自 `pmkol/easymosdns` 的模板到 `/etc/mosdns`。运行时可通过挂载覆盖。
+  - 镜像内已预置来自 `pmkol/easymosdns` 的模板到 `/etc/mosdns`。
 - 规则没更新？
-  - 确认已设置 `crontab`/`crontabcnd`，并检查 `/etc/mosdns/rules/update*` 是否存在且可执行。
+  - 确认已设置 `crontab`/`crontabcnd`，并检查 `/easymosdns/rules/update*` 是否存在且可执行。
 - 如何排查问题？
   - 先看 `docker logs mosdns-x`；必要时在运行容器内检查 `/etc/crontabs/root`、`/etc/mosdns` 目录结构与权限。
 
