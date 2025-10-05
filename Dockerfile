@@ -26,17 +26,27 @@ COPY --from=builder /mosdns /usr/bin/mosdns
 # 复制入口脚本
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN apk add --no-cache ca-certificates tzdata git busybox-suid && \
+RUN apk add --no-cache ca-certificates tzdata busybox-suid curl unzip && \
     echo "Updating CA certificates from local files..." && \
     update-ca-certificates && \
-    echo "Cloning default configuration from pmkol/easymosdns to /opt/easymosdns..." && \
-    git clone --depth 1 https://github.com/pmkol/easymosdns.git /opt/easymosdns && \
+    echo "Downloading default configuration from pmkol/easymosdns..." && \
+    # 创建目标目录
+    mkdir -p /easymosdns && \
+    # 使用 curl 下载仓库的 zip 压缩包到 /tmp 目录
+    curl -sSL "https://github.com/pmkol/easymosdns/archive/refs/heads/master.zip" -o /tmp/easymosdns.zip && \
+    # 将压缩包解压到 /tmp 目录，-q 参数表示静默模式
+    unzip -q /tmp/easymosdns.zip -d /tmp && \
+    # 将解压出来的文件夹 (easymosdns-master) 内的所有内容移动到目标位置
+    # 注意后面的 /。 表示移动文件夹内的所有内容
+    mv /tmp/easymosdns-master/. /easymosdns/ && \
+    # 清理下载的临时文件和解压出的空目录
+    rm -rf /tmp/easymosdns.zip /tmp/easymosdns-master && \
     # 确保更新脚本和入口脚本有可执行权限
-    chmod +x /opt/easymosdns/rules/update && \
-    chmod +x /opt/easymosdns/rules/update-cdn && \
+    chmod +x /easymosdns/rules/update && \
+    chmod +x /easymosdns/rules/update-cdn && \
     chmod +x /usr/local/bin/entrypoint.sh && \
-    # 清理不再需要的包
-    apk del git
+    # 清理不再需要的包（用完即删）
+    apk del curl unzip
 
 # 声明配置文件卷
 VOLUME /etc/mosdns
