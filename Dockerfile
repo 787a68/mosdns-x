@@ -26,24 +26,19 @@ COPY --from=builder /mosdns /usr/bin/mosdns
 # 复制入口脚本
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN apk add --no-cache ca-certificates tzdata busybox-suid curl unzip && \
+RUN apk add --no-cache ca-certificates tzdata busybox-suid git && \
     echo "Updating CA certificates..." && \
     update-ca-certificates && \
-    echo "Downloading default configuration from pmkol/easymosdns..." && \
-    # 创建目标目录
-    mkdir -p /easymosdns && \
-    # 1. 下载 main 分支的 zip 包
-    curl -sSL "https://github.com/pmkol/easymosdns/archive/refs/heads/main.zip" -o /tmp/easymosdns.zip && \
-    # 2. 使用 --strip-components=1 直接解压到目标目录，无需再 mv
-    unzip -q /tmp/easymosdns.zip -d /easymosdns --strip-components=1 && \
-    # 清理下载的临时文件
-    rm /tmp/easymosdns.zip && \
-    # 确保更新脚本和入口脚本有可执行权限
+    echo "Cloning default configuration from pmkol/easymosdns..." && \
+    # 使用 git clone --depth 1 只克隆最新版本
+    git clone --depth 1 --branch main https://github.com/pmkol/easymosdns.git /easymosdns && \
+    # 删除 .git 目录减小镜像体积
+    rm -rf /easymosdns/.git && \
     chmod +x /easymosdns/rules/update && \
     chmod +x /easymosdns/rules/update-cdn && \
     chmod +x /usr/local/bin/entrypoint.sh && \
-    # 清理不再需要的包
-    apk del curl unzip
+    # 在最后统一清理
+    apk del git
 
 # 声明配置文件卷
 VOLUME /etc/mosdns
