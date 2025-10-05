@@ -19,17 +19,13 @@ fi
 # 如果用户挂载的配置中缺少这些脚本，则从默认备份中恢复它们。
 mkdir -p "$CONFIG_DIR/rules" # 确保 rules 目录存在
 
-if [ ! -x "$CONFIG_DIR/rules/update" ]; then
-    echo "NOTICE: 'update' script is missing or not executable. Restoring from default..."
-    cp "$DEFAULT_CONFIG_DIR/rules/update" "$CONFIG_DIR/rules/update"
-    chmod +x "$CONFIG_DIR/rules/update"
-fi
-
-if [ ! -x "$CONFIG_DIR/rules/update-cdn" ]; then
-    echo "NOTICE: 'update-cdn' script is missing or not executable. Restoring from default..."
-    cp "$DEFAULT_CONFIG_DIR/rules/update-cdn" "$CONFIG_DIR/rules/update-cdn"
-    chmod +x "$CONFIG_DIR/rules/update-cdn"
-fi
+for script in update update-cdn; do
+    if [ ! -x "$CONFIG_DIR/rules/$script" ]; then
+        echo "NOTICE: '$script' script missing or not executable. Restoring..."
+        cp "$DEFAULT_CONFIG_DIR/rules/$script" "$CONFIG_DIR/rules/$script"
+        chmod +x "$CONFIG_DIR/rules/$script"
+    fi
+done
 
 CRONTAB_FILE="/etc/crontabs/root"
 

@@ -26,11 +26,6 @@ COPY --from=builder /mosdns /usr/bin/mosdns
 # 复制入口脚本
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# 新增：将仓库根目录的 Cloudflare Origin CA 证书复制到镜像中
-# 我们将其重命名为 .crt 后缀，这是 Alpine 系统推荐的格式
-COPY origin_ca_rsa_root.pem /usr/local/share/ca-certificates/cloudflare-origin-ca-rsa.crt
-COPY origin_ca_ecc_root.pem /usr/local/share/ca-certificates/cloudflare-origin-ca-ecc.crt
-
 RUN apk add --no-cache ca-certificates tzdata git busybox-suid && \
     echo "Updating CA certificates from local files..." && \
     update-ca-certificates && \
