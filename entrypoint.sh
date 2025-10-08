@@ -26,13 +26,13 @@ CRONTAB_FILE="/etc/crontabs/root"
 echo "Initializing cron jobs..."
 if [ -n "$crontab" ]; then
     # 执行 /easymosdns/rules/中的 update 脚本
-    echo "$crontab $DEFAULT_CONFIG_DIR/rules/update >> /proc/1/fd/1 2>&1" >> "$CRONTAB_FILE"
+    echo "$crontab $DEFAULT_CONFIG_DIR/rules/update >> /proc/1/fd/1 2>&1" > "$CRONTAB_FILE"
     echo "  -> Scheduled direct update: '$crontab'. Using pristine script."
 fi
 
 if [ -n "$crontabcnd" ]; then
     # 执行 /easymosdns/rules/中的 update-cdn 脚本
-    echo "$crontabcnd $DEFAULT_CONFIG_DIR/rules/update-cdn >> /proc/1/fd/1 2>&1" >> "$CRONTAB_FILE"
+    echo "$crontabcnd $DEFAULT_CONFIG_DIR/rules/update-cdn >> /proc/1/fd/1 2>&1" > "$CRONTAB_FILE"
     echo "  -> Scheduled CDN update: '$crontabcnd'. Using pristine script."
 fi
 

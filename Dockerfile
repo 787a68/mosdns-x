@@ -26,7 +26,7 @@ COPY --from=builder /mosdns /usr/bin/mosdns
 # 复制入口脚本
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN apk add --no-cache ca-certificates tzdata busybox-suid git && \
+RUN apk add --no-cache ca-certificates tzdata busybox-suid git bash curl && \
     echo "Updating CA certificates..." && \
     update-ca-certificates && \
     echo "Cloning default configuration from pmkol/easymosdns..." && \
