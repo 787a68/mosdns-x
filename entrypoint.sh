@@ -23,17 +23,16 @@ fi
 CRONTAB_FILE="/etc/crontabs/root"
 # 动态生成 crontab 配置文件
 # 将日志输出重定向到容器的标准输出流，方便通过 docker logs 查看
-echo "Initializing cron jobs..."
 if [ -n "$crontab" ]; then
     # 执行 /easymosdns/rules/中的 update 脚本
     echo "$crontab $DEFAULT_CONFIG_DIR/rules/update >> /proc/1/fd/1 2>&1" > "$CRONTAB_FILE"
-    echo "  -> Scheduled direct update: '$crontab'. Using pristine script."
+    echo "Scheduled direct update: '$crontab'. Using pristine script."
 fi
 
 if [ -n "$crontabcnd" ]; then
     # 执行 /easymosdns/rules/中的 update-cdn 脚本
     echo "$crontabcnd $DEFAULT_CONFIG_DIR/rules/update-cdn >> /proc/1/fd/1 2>&1" > "$CRONTAB_FILE"
-    echo "  -> Scheduled CDN update: '$crontabcnd'. Using pristine script."
+    echo "Scheduled CDN update: '$crontabcnd'. Using pristine script."
 fi
 
 # 如果定义了任何 cron 任务，则启动 cron 守护进程
